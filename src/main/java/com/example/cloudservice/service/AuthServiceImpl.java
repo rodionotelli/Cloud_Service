@@ -5,16 +5,18 @@ import com.example.cloudservice.dto.LoginResponse;
 import com.example.cloudservice.jwt.JwtGenerator;
 import com.example.cloudservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    private static final Logger log = LogManager.getLogger(AuthServiceImpl.class);
     private final AuthenticationManager authenticationManager;
     private final JwtGenerator jwtGenerator;
     private final UserRepository userRepository;
@@ -25,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
         final var authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final var token = jwtGenerator.generateToken(authentication);
+        log.info("User is logged in");
         return new LoginResponse(token);
     }
 
