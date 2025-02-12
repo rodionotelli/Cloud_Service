@@ -4,6 +4,8 @@ import com.example.cloudservice.entity.FileData;
 import com.example.cloudservice.repository.FileDBRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FileDBStorageService implements StorageService {
 
+    private static final Logger log = LogManager.getLogger(FileDBStorageService.class);
     private final FileDBRepository fileDBRepository;
 
     @Override
@@ -34,12 +37,14 @@ public class FileDBStorageService implements StorageService {
         if (optionalFile.isEmpty()) {
             throw new FileNotFoundException("File is not found.");
         }
+        log.info("File success download");
         return optionalFile.get();
     }
 
     @Override
     @Transactional
     public void deleteFile(String filename) {
+        log.info("File has been deleted");
         fileDBRepository.deleteFileDataByFilename(filename);
     }
 
@@ -60,6 +65,7 @@ public class FileDBStorageService implements StorageService {
         if (!newFileData.getFilename().isEmpty()) {
             fileData.setFilename(newFileData.getFilename());
         }
+        log.info("File success update");
         fileDBRepository.save(fileData);
 
     }
